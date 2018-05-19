@@ -3,6 +3,7 @@ package ru.javaops.masterjava.matrix;
 import java.util.Random;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
+import java.util.concurrent.CountDownLatch;
 
 /**
  * gkislin
@@ -10,24 +11,41 @@ import java.util.concurrent.ExecutorService;
  */
 public class MatrixUtil {
 
-    // TODO implement parallel multiplication matrixA*matrixB
     public static int[][] concurrentMultiply(int[][] matrixA, int[][] matrixB, ExecutorService executor) throws InterruptedException, ExecutionException {
         final int matrixSize = matrixA.length;
         final int[][] matrixC = new int[matrixSize][matrixSize];
 
+        CountDownLatch latch = new CountDownLatch(matrixSize);
+
+        for (int i = 0; i < matrixSize; i++) {
+            executor.submit(new Task(latch, matrixA, matrixB, matrixC, matrixSize, i));
+        }
+
+        try {
+            latch.await();
+        } catch (InterruptedException E) {
+            System.out.println("interrupted");
+        }
+
         return matrixC;
     }
 
-    // TODO optimize by https://habrahabr.ru/post/114797/
     public static int[][] singleThreadMultiply(int[][] matrixA, int[][] matrixB) {
         final int matrixSize = matrixA.length;
         final int[][] matrixC = new int[matrixSize][matrixSize];
 
+        int thatColumn[] = new int[matrixSize];
+
         for (int i = 0; i < matrixSize; i++) {
             for (int j = 0; j < matrixSize; j++) {
+                thatColumn[j] = matrixB[j][i];
+            }
+
+            for (int j = 0; j < matrixSize; j++) {
+                int thisRow[] = matrixA[i];
                 int sum = 0;
                 for (int k = 0; k < matrixSize; k++) {
-                    sum += matrixA[i][k] * matrixB[k][j];
+                    sum += thisRow[k] * thatColumn[k];
                 }
                 matrixC[i][j] = sum;
             }
