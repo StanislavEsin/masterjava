@@ -4,6 +4,7 @@ import java.util.Random;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.CountDownLatch;
+import java.util.stream.IntStream;
 
 /**
  * gkislin
@@ -17,9 +18,25 @@ public class MatrixUtil {
 
         CountDownLatch latch = new CountDownLatch(matrixSize);
 
-        for (int i = 0; i < matrixSize; i++) {
-            executor.submit(new Task(latch, matrixA, matrixB, matrixC, matrixSize, i));
-        }
+        IntStream.range(0, matrixSize)
+                .forEach(row -> executor.submit(() -> {
+                    int thatColumn[] = new int[matrixSize];
+
+                    for (int j = 0; j < matrixSize; j++) {
+                        thatColumn[j] = matrixB[j][row];
+                    }
+
+                    for (int j = 0; j < matrixSize; j++) {
+                        int thisRow[] = matrixA[row];
+                        int sum = 0;
+                        for (int k = 0; k < matrixSize; k++) {
+                            sum += thisRow[k] * thatColumn[k];
+                        }
+                        matrixC[row][j] = sum;
+                    }
+
+                    latch.countDown();
+                }));
 
         try {
             latch.await();
