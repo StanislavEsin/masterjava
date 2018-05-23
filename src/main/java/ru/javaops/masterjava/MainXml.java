@@ -5,7 +5,6 @@ import java.util.Comparator;
 import java.util.List;
 import java.util.ArrayList;
 import java.util.stream.Collectors;
-import java.util.function.BiPredicate;
 import java.util.Optional;
 import com.google.common.io.Resources;
 import ru.javaops.masterjava.xml.util.JaxbParser;
@@ -36,15 +35,6 @@ public class MainXml {
         JaxbParser jaxbParser = new JaxbParser(ObjectFactory.class);
         jaxbParser.setSchema(Schemas.ofClasspath("payload.xsd"));
 
-        BiPredicate<List<Project.Groups.Group>,
-                List<Project.Groups.Group>> isIncludedInProject = (projectGroups, userGroups) -> {
-            for (Project.Groups.Group group : userGroups) {
-                if (projectGroups.contains(group)) return true;
-            }
-
-            return false;
-        };
-
         try {
             Payload payload = jaxbParser.unmarshal(Resources.getResource(xmlName).openStream());
             Optional<Project> project = payload.getProjects().getProject().stream()
@@ -54,7 +44,7 @@ public class MainXml {
                 List<Project.Groups.Group> projectGroups = project.get().getGroups().getGroup();
 
                 result = payload.getUsers().getUser().stream()
-                        .filter(user -> isIncludedInProject.test(projectGroups, user.getGroupRefs()))
+                        .filter(user -> user.getGroupRefs().stream().anyMatch(projectGroups::contains))
                         .sorted(Comparator.comparing(User::getValue))
                         .collect(Collectors.toList());
             }
