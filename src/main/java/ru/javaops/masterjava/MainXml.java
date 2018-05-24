@@ -4,18 +4,17 @@ import ru.javaops.masterjava.xml.schema_hw.*;
 import ru.javaops.masterjava.xml.util.JaxbParser;
 import ru.javaops.masterjava.xml.util.Schemas;
 import ru.javaops.masterjava.xml.util.StaxStreamProcessor;
-import java.util.List;
-import java.util.Arrays;
-import java.util.ArrayList;
-import java.util.Comparator;
-import java.util.Optional;
+import ru.javaops.masterjava.xml.util.XsltProcessor;
+import java.util.*;
 import java.util.stream.Collectors;
 import com.google.common.io.Resources;
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamReader;
 import javax.xml.stream.events.XMLEvent;
 import java.io.IOException;
+import java.io.InputStream;
 import javax.xml.bind.JAXBException;
+import javax.xml.transform.TransformerException;
 
 /**
  * MainXml.
@@ -30,8 +29,16 @@ public class MainXml {
             System.exit(1);
         }
 
-        List<User> usersJAXB = new MainXml().getSortedListUsersByNameProjectUsingJAXB(args[0], args[1]);
-        List<User> usersStAX = new MainXml().getSortedListUsersByNameProjectUsingStAX(args[0], args[1]);
+        MainXml mainXml = new MainXml();
+
+        List<User> usersJAXB = mainXml.getSortedListUsersByNameProjectUsingJAXB(args[0], args[1]);
+        List<User> usersStAX = mainXml.getSortedListUsersByNameProjectUsingStAX(args[0], args[1]);
+
+        String members = mainXml.getTransformedXml(args[1], "list_of_members.xsl", null).trim();
+
+        Map<String, String> params = new HashMap<>();
+        params.put("projectName", args[0]);
+        String groupsByProject = mainXml.getTransformedXml(args[1], "with_groups_by_project.xsl", params).trim();
     }
 
     public List<User> getSortedListUsersByNameProjectUsingJAXB(String projectName, String xmlName) {
@@ -99,5 +106,22 @@ public class MainXml {
         return result.stream()
                 .sorted(Comparator.comparing(User::getValue))
                 .collect(Collectors.toList());
+    }
+
+    public String getTransformedXml(String xmlName, String xslName, Map<String, String> parameters) {
+        String result = "";
+
+        try (InputStream xslInputStream = Resources.getResource(xslName).openStream();
+             InputStream xmlInputStream = Resources.getResource(xmlName).openStream()) {
+            XsltProcessor processor = new XsltProcessor(xslInputStream);
+
+            if (parameters != null) parameters.forEach(processor::setParameter);
+
+            result = processor.transform(xmlInputStream);
+        } catch (IOException | TransformerException e) {
+            e.printStackTrace();
+        }
+
+        return result;
     }
 }
