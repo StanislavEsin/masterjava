@@ -10,11 +10,11 @@
     <url>https://github.com/JavaOPs/masterjava</url>
 
     <modules>
-        <module>test</module>
+        <module>parent</module>
+        <module>parent-web</module>
+        <module>web</module>
+        <module>services</module>
         <module>common</module>
-        <module>web/upload</module>
-        <module>web/webapp</module>
-        <module>services/mail-service</module>
-        <module>services/mail-api</module>
+        <module>test</module>
     </modules>
 </project>
