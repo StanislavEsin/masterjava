@@ -1,0 +1,20 @@
+<!DOCTYPE html SYSTEM "http://www.thymeleaf.org/dtd/xhtml1-strict-thymeleaf-4.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1">
+    <title>Upload XML</title>
+</head>
+
+<body>
+    <div>
+        <p><a href="/upload/">Back to upload file</a></p>
+        <br>
+        <h2>Application error: </h2>
+        <h4 th:text="${exception.message}">exception.message</h4>
+        <ul>
+            <li th:each="item:${exception.stackTrace}" th:text="${item}"></li>
+        </ul>
+    </div>
+</body>
+
+</html>

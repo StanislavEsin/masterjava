@@ -1,0 +1,29 @@
+<!DOCTYPE html SYSTEM "http://www.thymeleaf.org/dtd/xhtml1-strict-thymeleaf-4.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1">
+    <title>Upload XML</title>
+</head>
+
+<body>
+    <div>
+        <p><a href="/upload/">Back to upload file</a></p>
+        <br>
+        <h2>Uploaded users</h2>
+        <table border="1" cellpadding="8" cellspacing="0">
+            <tr>
+                <th>Full name</th>
+                <th>Email</th>
+                <th>Flag</th>
+            </tr>
+
+            <tr th:each="user:${users}">
+                <td th:text="${user.fullName}"></td>
+                <td th:text="${user.email}"></td>
+                <td th:text="${user.flag}"></td>
+            </tr>
+        </table>
+    </div>
+</body>
+
+</html>
