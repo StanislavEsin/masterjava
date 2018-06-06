@@ -17,6 +17,7 @@
         <module>web</module>
         <module>services</module>
         <module>common</module>
+        <module>persist</module>
         <module>test</module>
     </modules>
 </project>
