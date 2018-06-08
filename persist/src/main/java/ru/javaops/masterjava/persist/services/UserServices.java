@@ -1,4 +1,4 @@
-package ru.javaops.masterjava.services;
+package ru.javaops.masterjava.persist.services;
 
 import java.util.List;
 import ru.javaops.masterjava.persist.model.User;

@@ -1,9 +1,9 @@
-package ru.javaops.masterjava.services.impl;
+package ru.javaops.masterjava.persist.services.impl;
 
 import ru.javaops.masterjava.persist.DBIProvider;
 import ru.javaops.masterjava.persist.dao.UserDao;
 import ru.javaops.masterjava.persist.model.User;
-import ru.javaops.masterjava.services.UserServices;
+import ru.javaops.masterjava.persist.services.UserServices;
 import java.util.List;
 
 /**
