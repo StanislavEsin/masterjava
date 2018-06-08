@@ -1,16 +1,21 @@
-<head>
-    <meta charset="UTF-8">
-    <title>Upload XML</title>
-</head>
-<body>
-<form action="" method="post" enctype="multipart/form-data">
-    <h3>Select xml file to upload</h3>
-    <p>
-        <input type="file" name="fileToUpload" id="fileToUpload"><br/>
-    </p>
-    <p>
-        <input type="submit" value="Upload" name="submit">
-    </p>
-</form>
-</body>
+<html>
+    <head>
+        <meta charset="UTF-8">
+        <title>Upload XML</title>
+    </head>
+    <body>
+        <form action="" method="post" enctype="multipart/form-data">
+            <h3>Select xml file to upload</h3>
+            <p>
+                <input type="file" name="fileToUpload" id="fileToUpload"><br/>
+            </p>
+            <p>
+                <label for="chunkSize">Chunk size: </label>
+                <input type="number" value="1" min="1" name="chunkSize" id="chunkSize"><br/>
+            </p>
+            <p>
+                <input type="submit" value="Upload" name="submit">
+            </p>
+        </form>
+    </body>
 </html>

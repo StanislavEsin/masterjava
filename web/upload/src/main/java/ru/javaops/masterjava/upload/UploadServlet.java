@@ -1,8 +1,9 @@
 package ru.javaops.masterjava.upload;
 
-import org.thymeleaf.context.WebContext;
 import ru.javaops.masterjava.persist.model.User;
-
+import ru.javaops.masterjava.services.UserServices;
+import ru.javaops.masterjava.services.impl.UserServicesImpl;
+import org.thymeleaf.context.WebContext;
 import javax.servlet.ServletException;
 import javax.servlet.annotation.MultipartConfig;
 import javax.servlet.annotation.WebServlet;
@@ -10,9 +11,9 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.Part;
-import java.io.IOException;
-import java.io.InputStream;
 import java.util.List;
+import java.io.InputStream;
+import java.io.IOException;
 
 import static ru.javaops.masterjava.common.web.ThymeleafListener.engine;
 
@@ -21,6 +22,7 @@ import static ru.javaops.masterjava.common.web.ThymeleafListener.engine;
 public class UploadServlet extends HttpServlet {
 
     private final UserProcessor userProcessor = new UserProcessor();
+    private final UserServices userServices = new UserServicesImpl();
 
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
@@ -39,7 +41,11 @@ public class UploadServlet extends HttpServlet {
                 throw new IllegalStateException("Upload file have not been selected");
             }
             try (InputStream is = filePart.getInputStream()) {
+                int chunkSize = Integer.parseInt(req.getParameter("chunkSize"));
                 List<User> users = userProcessor.process(is);
+
+                userServices.save(users, chunkSize);
+
                 webContext.setVariable("users", users);
                 engine.process("result", webContext, resp.getWriter());
             }
