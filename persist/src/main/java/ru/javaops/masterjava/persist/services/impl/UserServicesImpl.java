@@ -17,8 +17,8 @@ public class UserServicesImpl implements UserServices {
     private final UserDao userDao = DBIProvider.getDao(UserDao.class);
 
     @Override
-    public void save(List<User> users, int chunkSize) {
-        userDao.insertAll(users, chunkSize);
+    public int[] save(List<User> users, int chunkSize) {
+        return userDao.insertAll(users, chunkSize);
     }
 
     @Override

@@ -12,9 +12,10 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.Part;
 import java.util.List;
+import java.util.stream.IntStream;
+import static java.util.stream.Collectors.toList;
 import java.io.InputStream;
 import java.io.IOException;
-
 import static ru.javaops.masterjava.common.web.ThymeleafListener.engine;
 
 @WebServlet(urlPatterns = "/", loadOnStartup = 1)
@@ -44,9 +45,13 @@ public class UploadServlet extends HttpServlet {
                 int chunkSize = Integer.parseInt(req.getParameter("chunkSize"));
                 List<User> users = userProcessor.process(is);
 
-                userServices.save(users, chunkSize);
+                int[] indexesAddedUsers = userServices.save(users, chunkSize);
+                List<User> addedUsers = IntStream.range(0, users.size() - 1)
+                        .filter(i -> indexesAddedUsers[i] == 0)
+                        .mapToObj(users::get)
+                        .collect(toList());
 
-                webContext.setVariable("users", users);
+                webContext.setVariable("users", addedUsers);
                 engine.process("result", webContext, resp.getWriter());
             }
         } catch (Exception e) {
