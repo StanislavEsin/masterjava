@@ -1,0 +1,29 @@
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Upload XML</title>
+</head>
+<html>
+    <body>
+        <h1>First 20 users</h1>
+        <br/>
+
+        <table border="1" cellpadding="8" cellspacing="0">
+            <thead>
+                <tr>
+                    <th>Full Name</th>
+                    <th>Email</th>
+                    <th>Flag</th>
+                </tr>
+            </thead>
+
+            <tbody>
+                <tr th:each="user : ${users}">
+                    <td th:text="${user.fullName}"></td>
+                    <td th:utext="${user.email}"></td>
+                    <td th:text="${user.flag}"></td>
+                </tr>
+            </tbody>
+        </table>
+    </body>
+</html>
